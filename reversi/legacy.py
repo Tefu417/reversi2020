@@ -1,3 +1,4 @@
+import random
 
 #
 # オセロ（リバーシ） 6x6
@@ -98,7 +99,7 @@ def put_and_reverse(board, position, color):
     board[position] = EMPTY
   return turned
 
-# プレイが継続できるか？ 
+# プレイが継続できるか？
 # つまり、まだ石を置けるところが残っているか調べる？
 def can_play(board, color):
   board = board[:] # コピーしてボードを変更しないようにする
@@ -134,4 +135,23 @@ def ochibi(board, color): #おチビAI
       return position
   return 0
 
-game(ochibi, ochibi)
+def rand_int(a, b, k):  # 重複無しの乱整数生成
+  # a：下限
+  # b：上限
+  # k：要素数
+  ns = []
+  # 生成した乱整数をリストに入れていく
+  # リストに既出の乱整数はスルーする
+  while len(ns) < k:
+    n = random.randint(a, b)
+    if not n in ns:
+      ns.append(n)
+  return ns
+
+def random_tefu(board, color) :
+  for position in rand_int(0, 35, 36):
+    if put_and_reverse(board, position, color):
+      return position
+  return 0
+
+game(ochibi, random_tefu)
