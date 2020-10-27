@@ -23,7 +23,6 @@ def p(x, y):    # 2次元から1次元へ
   return x + y * N
 
 # リバーシの初期画面を生成する
-
 def init_board():
   board = [EMPTY] * (N*N)
   c = N//2
@@ -34,7 +33,6 @@ def init_board():
   return board
 
 # リバーシの画面を表示する
-
 def show_board(board):
   counts = [0, 0, 0]
   for y in range(N):
@@ -71,10 +69,8 @@ def opposite(color):
   return BLACK
 
 # (x,y) が相手（反対）の色かどうか判定
-
 def is_oposite(board, x, y, color):
   return on_borad(x, y) and board[p(x, y)] == opposite(color)
-
 
 DIR = [
     (-1, -1), (0, -1), (1, -1),
@@ -148,10 +144,43 @@ def rand_int(a, b, k):  # 重複無しの乱整数生成
       ns.append(n)
   return ns
 
-def random_tefu(board, color) :
+# 酔っ払いAI
+def random_tefu(board, color):
   for position in rand_int(0, 35, 36):
     if put_and_reverse(board, position, color):
       return position
   return 0
 
-game(ochibi, random_tefu)
+def check_put_and_reverse(board, position, color):
+  board = board[:]    # コピーしてボードを変更しないようにする
+  cnt_stone = 0   # ひっくり返せる石の数をカウント
+  if board[position] != EMPTY:
+  	return (cnt_stone, position)
+  board[position] = color
+
+  x, y = xy(position)
+  turned = False
+  for dx, dy in DIR:
+    nx = x + dx
+    ny = y + dy
+    if is_oposite(board, nx, ny, color):
+      if try_reverse(board, nx, ny, dx, dy, color):
+        cnt_stone += 1
+        turned = True
+  if not turned:
+    board[position] = EMPTY
+  return (cnt_stone, position)
+
+# 貪欲AI
+def greedy_tefu(board, color):
+  max_stone = 0   # ひっくり返せる最大の石の数
+  max_stone_position = 0    # max_stoneになるposition
+  for position in range(N*N):
+    if check_put_and_reverse(board, position, color)[0] > max_stone:
+      max_stone = check_put_and_reverse(board, position, color)[0]
+      max_stone_position = check_put_and_reverse(board, position, color)[1]
+
+  return max_stone_position
+
+game(greedy_tefu, greedy_tefu)
+
