@@ -182,5 +182,5 @@ def greedy_tefu(board, color):
 
   return max_stone_position
 
-game(greedy_tefu, greedy_tefu)
+game(random_tefu, greedy_tefu)
 
